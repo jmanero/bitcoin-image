@@ -1,0 +1,24 @@
+[Unit]
+Description=bitcoind in a podman container
+Documentation=https://github.com/jmanero/bitcoin-image
+
+Wants=network-online.target local-fs.target
+After=network-online.target local-fs.target
+
+RequiresMountsFor=%t/containers
+
+[Service]
+Type=notify
+NotifyAccess=all
+
+Restart=on-failure
+TimeoutStopSec=70
+
+Environment=PODMAN_SYSTEMD_UNIT=%n
+ExecStartPre=/bin/rm -f %t/%n.ctr-id
+ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon -d --log-driver=journald --read-only --volume /var/data/bitcoin:/data:z bitcoin:23.0-fedora -datadir=/data
+ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
+ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
+
+[Install]
+WantedBy=default.target
