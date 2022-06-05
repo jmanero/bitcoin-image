@@ -16,14 +16,14 @@ TimeoutStopSec=70
 
 Environment=PODMAN_SYSTEMD_UNIT=%n
 ExecStartPre=/bin/rm -f %t/%n.cid
-ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.cid
-ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.cid
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.cid
+ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
 
-ExecStart=/usr/bin/podman run -d --cidfile=%t/%n.cid --rm\
-  --cgroups=no-conmon --sdnotify=conmon --log-driver=journald --init\
-  --publish 3002:3002 --volume /var/data/bitcoin/.cookie:/data/.cookie:ro\
+ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm\
+  --cgroups no-conmon --sdnotify conmon --log-driver journald --init\
+  --publish 3002:3002 --net bitcoind --volume /var/data/bitcoin/.cookie:/data/.cookie:ro\
   ghcr.io/jmanero/bitcoind-explorer:3.3.0\
-  --bitcoind-host 10.88.0.12 --bitcoind-cookie /data/.cookie --host 0.0.0.0
+  --bitcoind-host bitcoind --bitcoind-cookie /data/.cookie --host 0.0.0.0
 
 [Install]
 WantedBy=default.target

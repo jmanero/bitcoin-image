@@ -16,13 +16,13 @@ TimeoutStopSec=70
 
 Environment=PODMAN_SYSTEMD_UNIT=%n
 ExecStartPre=/bin/rm -f %t/%n.cid
-ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.cid
-ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.cid
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.cid
+ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
 
-ExecStart=/usr/bin/podman run -d --cidfile=%t/%n.cid --rm\
-  --cgroups=no-conmon --sdnotify=conmon --log-driver=journald --name=bitcoind\
-  --read-only --stop-timeout 120 --volume /var/data/bitcoin:/data:z\
-  ghcr.io/jmanero/bitcoind:23.0-fedora -conf=/etc/bitcoin/bitcoin.conf
+ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm\
+  --cgroups no-conmon --sdnotify conmon --log-driver journald --name bitcoind\
+  --read-only --stop-timeout 120 --net bitcoind --volume /var/data/bitcoin:/data:z\
+  ghcr.io/jmanero/bitcoind:23.0 -conf=/etc/bitcoin/bitcoin.conf
 
 [Install]
 WantedBy=default.target
