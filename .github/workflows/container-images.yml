@@ -18,7 +18,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: jmanero/bitcoind
-        tags: latest 23.0 23.0+${{ github.sha }}
+        tags: latest 23.0 23.0-${{ github.sha }}
         context: bitcoind
         containerfiles: bitcoind/Containerfile
 
@@ -44,11 +44,11 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: jmanero/electrs
-        tags: latest 0.9.8 0.9.8+${{ github.sha }}
+        tags: latest 0.9.8 0.9.8-${{ github.sha }}
         context: electrs
         containerfiles: electrs/Containerfile
 
-    - name: Push bitcoind Image to Registry
+    - name: Push electrs Image to Registry
       id: push-electrs
       uses: redhat-actions/push-to-registry@v2
       with:
