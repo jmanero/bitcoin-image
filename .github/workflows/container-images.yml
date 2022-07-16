@@ -18,7 +18,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: jmanero/bitcoind
-        tags: latest 23.0
+        tags: latest 23.0 23.0+${{ github.sha }}
         context: bitcoind
         containerfiles: bitcoind/Containerfile
 
@@ -32,28 +32,28 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-  bitcoind_explorer:
-    name: Build and Push bitcoind-explorer Image
+  electrs:
+    name: Build and Push electrs Image
     runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Build bitcoind-explorer Image
-      id: build-bitcoind-explorer
+    - name: Build electrs Image
+      id: build-electrs
       uses: redhat-actions/buildah-build@v2
       with:
-        image: jmanero/bitcoind-explorer
-        tags: latest 3.3.0
-        context: bitcoind-explorer
-        containerfiles: bitcoind-explorer/Containerfile
+        image: jmanero/electrs
+        tags: latest 0.9.8 0.9.8+${{ github.sha }}
+        context: electrs
+        containerfiles: electrs/Containerfile
 
     - name: Push bitcoind Image to Registry
-      id: push-bitcoind-explorer
+      id: push-electrs
       uses: redhat-actions/push-to-registry@v2
       with:
-        image: ${{ steps.build-bitcoind-explorer.outputs.image }}
-        tags: ${{ steps.build-bitcoind-explorer.outputs.tags }}
+        image: ${{ steps.build-electrs.outputs.image }}
+        tags: ${{ steps.build-electrs.outputs.tags }}
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

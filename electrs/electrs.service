@@ -1,0 +1,31 @@
+[Unit]
+Description=Electrum Server in Rust
+Documentation=https://github.com/romanz/electrs
+
+Wants=network-online.target local-fs.target podman-network@bitcoind.service bitcoind.service
+After=network-online.target local-fs.target podman-network@bitcoind.service bitcoind.service
+
+RequiresMountsFor=%t/containers
+
+[Service]
+Type=notify
+NotifyAccess=all
+
+Restart=on-failure
+TimeoutStopSec=70
+
+Environment=PODMAN_SYSTEMD_UNIT=%n
+ExecStartPre=/usr/bin/rm -f %t/%n.cid
+ExecStartPre=/usr/bin/mkdir -p /var/data/electrs
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.cid
+ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
+
+ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull always\
+  --cgroups no-conmon --sdnotify conmon --log-driver journald --name electrs\
+  --read-only --stop-timeout 120 --net bitcoind --publish 50001:50001 --publish 50042:50042\
+  --volume /var/data/electrs:/data:z\
+  --volume /var/data/bitcoin:/var/bitcoin:ro\
+  ghcr.io/jmanero/electrs:0.9.8
+
+[Install]
+WantedBy=default.target

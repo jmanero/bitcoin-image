@@ -1,6 +1,7 @@
-FROM registry.fedoraproject.org/fedora:36 AS fetch
-
 ARG VERSION="23.0"
+
+FROM registry.fedoraproject.org/fedora:36 AS fetch
+ARG VERSION
 
 ADD https://bitcoincore.org/bin/bitcoin-core-${VERSION}/bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz .
 ADD https://bitcoincore.org/bin/bitcoin-core-${VERSION}/SHA256SUMS .
@@ -18,11 +19,10 @@ RUN sha256sum --ignore-missing --check SHA256SUMS
 RUN tar -xzf bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
 
 FROM registry.fedoraproject.org/fedora-minimal:36
-
-ARG VERSION="23.0"
+ARG VERSION
 
 RUN mkdir -p /etc/bitcoin
-COPY bitcoin.conf /etc/bitcoin
+COPY bitcoin.conf /etc/bitcoin/
 
 ## bitcoin-core's linux build maps to an FHS tree... Just dump it into the image's /usr tree
 COPY --from=fetch bitcoin-${VERSION} /usr

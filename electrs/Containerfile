@@ -1,0 +1,26 @@
+ARG VERSION="0.9.8"
+
+## Build the Rust binary
+FROM docker.io/rust:1-slim-bullseye AS build
+ARG VERSION
+
+RUN apt-get update
+RUN apt-get install -y clang librocksdb-dev=6.11.4-3
+
+## Fetch from GitHub... Unfortunatly the maintauners aren't providing signatures
+## for releases, and GitHub doesn't currently provide a way to validate their
+## auto-generated archives...
+ADD https://github.com/romanz/electrs/archive/refs/tags/v${VERSION}.tar.gz .
+RUN tar -xvzf v${VERSION}.tar.gz
+
+WORKDIR /electrs-${VERSION}
+RUN cargo build --locked --release
+
+FROM registry.fedoraproject.org/fedora-minimal:36
+ARG VERSION
+
+RUN mkdir -p /etc/electrs
+COPY config.toml /etc/electrs/
+COPY --from=build /electrs-${VERSION}/target/release/electrs /usr/bin/
+
+ENTRYPOINT [ "/usr/bin/electrs" ]
