@@ -22,7 +22,7 @@ ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
 
 ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull always\
   --cgroups no-conmon --sdnotify conmon --log-driver journald --name bitcoind\
-  --read-only --stop-timeout 120 --net bitcoind\
+  --read-only --stop-timeout 120 --network bitcoind\
   --volume /var/data/bitcoin:/data:z\
   ghcr.io/jmanero/bitcoind:23.0 -conf=/etc/bitcoin/bitcoin.conf
 

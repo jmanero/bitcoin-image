@@ -22,9 +22,8 @@ ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
 
 ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull always\
   --cgroups no-conmon --sdnotify conmon --log-driver journald --name electrs\
-  --read-only --stop-timeout 120 --net bitcoind --publish 50001:50001 --publish 50042:50042\
+  --read-only --stop-timeout 120 --network bitcoind --publish 50001:50001 --publish 50042:50042\
   --volume /var/data/electrs:/data:z\
-  --volume /var/data/bitcoin:/var/bitcoin:ro\
   ghcr.io/jmanero/electrs:0.9.8
 
 [Install]
