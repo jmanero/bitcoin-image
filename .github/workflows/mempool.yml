@@ -5,6 +5,8 @@ on:
       - master
     paths:
       - 'mempool/**'
+  workflow_dispatch:
+    inputs: {}
 
 permissions:
   contents: read

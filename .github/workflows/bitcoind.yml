@@ -5,6 +5,9 @@ on:
       - master
     paths:
       - 'bitcoind/**'
+  workflow_dispatch:
+    inputs: {}
+
 
 permissions:
   contents: read
