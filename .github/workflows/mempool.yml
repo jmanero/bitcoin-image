@@ -23,7 +23,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: ghcr.io/jmanero/mempool-ui
-        tags: latest 0.9.8 0.9.8-${{ github.sha }}
+        tags: latest 2.4.0 2.4.0-${{ github.sha }}
         context: mempool
         containerfiles: mempool/Containerfile
         extra-args: --target frontend
@@ -33,7 +33,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: ghcr.io/jmanero/mempool
-        tags: latest 0.9.8 0.9.8-${{ github.sha }}
+        tags: latest 2.4.0 2.4.0-${{ github.sha }}
         context: mempool
         containerfiles: mempool/Containerfile
         extra-args: --target backend
