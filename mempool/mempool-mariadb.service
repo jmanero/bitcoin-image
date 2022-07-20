@@ -1,0 +1,33 @@
+[Unit]
+Description=MariaDB instance for Mempool
+Documentation=https://mariadb.org/documentation
+
+Wants=network-online.target local-fs.target podman-network@mempool.service
+After=network-online.target local-fs.target podman-network@mempool.service
+
+RequiresMountsFor=%t/containers
+
+[Service]
+Type=notify
+NotifyAccess=all
+
+Restart=on-failure
+TimeoutStopSec=70
+
+Environment=PODMAN_SYSTEMD_UNIT=%n
+ExecStartPre=/usr/bin/rm -f %t/%n.cid
+ExecStartPre=/usr/bin/mkdir -p /var/data/mempool/db
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.cid
+ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
+
+ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull newer\
+  --cgroups no-conmon --sdnotify conmon --log-driver journald --name mempool-mariadb\
+  --read-only --stop-timeout 120 --network mempool\
+  --volume /var/data/mempool/db:/var/lib/mysql:z\
+  --volume /etc/mempool/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro\
+  --env MARIADB_RANDOM_ROOT_PASSWORD=1\
+  docker.io/mariadb:10.8.3
+
+
+[Install]
+WantedBy=default.target
