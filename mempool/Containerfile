@@ -18,8 +18,8 @@ RUN npm install --omit=dev --omit=optional
 RUN npm run build
 
 ## Build an output FS tre to be copeied into the minimal static-server image
-RUN mkdir -p tree/var/lib
-RUN cp -r dist/mempool/browser/en-US/ tree/var/lib/www
+RUN mkdir -p tree/var/lib/www
+RUN cp -r dist/mempool/browser/en-US/ tree/var/lib/www/mempool
 ## Create an empty file for a health-check endpoint
 RUN touch tree/var/lib/www/liveness
 

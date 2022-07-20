@@ -25,7 +25,7 @@ jobs:
       id: build
       uses: redhat-actions/buildah-build@v2
       with:
-        image: ghcr.io/jmanero/bitcoind
+        image: jmanero/bitcoind
         tags: latest 23.0 23.0-${{ github.sha }}
         context: bitcoind
         containerfiles: bitcoind/Containerfile

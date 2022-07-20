@@ -24,20 +24,22 @@ jobs:
       id: build-ui
       uses: redhat-actions/buildah-build@v2
       with:
-        image: ghcr.io/jmanero/mempool-ui
+        image: jmanero/mempool-ui
         tags: latest 2.4.0 2.4.0-${{ github.sha }}
         context: mempool
         containerfiles: mempool/Containerfile
+        layers: true
         extra-args: --target frontend
 
     - name: Build Backend Image
       id: build-backend
       uses: redhat-actions/buildah-build@v2
       with:
-        image: ghcr.io/jmanero/mempool
+        image: jmanero/mempool
         tags: latest 2.4.0 2.4.0-${{ github.sha }}
         context: mempool
         containerfiles: mempool/Containerfile
+        layers: true
         extra-args: --target backend
 
     - name: Push UI Image to Registry

@@ -26,7 +26,7 @@ ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull newer\
   --label traefik.enable=true\
   --label traefik.http.services.mempool-ui.loadbalancer.server.port=9807\
   --label traefik.http.services.mempool-ui.loadbalancer.healthCheck.path=/liveness\
-  ghcr.io/jmanero/mempool-ui:v2.4.0 --listen 0.0.0.0:9807 /var/lib/www
+  ghcr.io/jmanero/mempool-ui:2.4.0 --listen 0.0.0.0:9807 /var/lib/www
 
 [Install]
 WantedBy=default.target
