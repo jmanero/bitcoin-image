@@ -20,7 +20,7 @@ ExecStartPre=/usr/bin/mkdir -p /var/data/mempool/cache
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.cid
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
 
-ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm\
+ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull newer\
   --cgroups no-conmon --sdnotify conmon --log-driver journald --name mempool\
   --read-only --init --stop-timeout 120 --network mempool --network bitcoind\
   --volume /var/data/mempool/cache:/opt/mempool/cache:z\
