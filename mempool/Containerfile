@@ -27,7 +27,7 @@ FROM ghcr.io/jmanero/static:latest AS frontend
 ARG VERSION
 
 ## Deploy the english UI version
-COPY --from=builder /mempool-${VERSION}/frontend/tree /
+COPY --from=build /mempool-${VERSION}/frontend/tree /
 CMD [ "--listen", "0.0.0.0:9807", "/var/lib/www" ]
 
 FROM docker.io/node:16-slim AS backend
