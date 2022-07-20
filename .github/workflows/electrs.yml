@@ -1,0 +1,38 @@
+name: electrs
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'electrs/**'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  image:
+    name: Build and Push Image
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Image
+      id: build
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ghcr.io/jmanero/electrs
+        tags: latest 0.9.8 0.9.8-${{ github.sha }}
+        context: electrs
+        containerfiles: electrs/Containerfile
+
+    - name: Push Image to Registry
+      id: push
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build.outputs.image }}
+        tags: ${{ steps.build.outputs.tags }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}

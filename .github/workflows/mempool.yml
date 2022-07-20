@@ -1,0 +1,59 @@
+name: mempool
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'mempool/**'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  mempool:
+    name: Build and Push Images
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build UI Image
+      id: build-ui
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ghcr.io/jmanero/mempool-ui
+        tags: latest 0.9.8 0.9.8-${{ github.sha }}
+        context: mempool
+        containerfiles: mempool/Containerfile
+        extra-args: --target frontend
+
+    - name: Build Backend Image
+      id: build-backend
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ghcr.io/jmanero/mempool
+        tags: latest 0.9.8 0.9.8-${{ github.sha }}
+        context: mempool
+        containerfiles: mempool/Containerfile
+        extra-args: --target backend
+
+    - name: Push UI Image to Registry
+      id: push-ui
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-ui.outputs.image }}
+        tags: ${{ steps.build-ui.outputs.tags }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push Backend Image to Registry
+      id: push-mempool
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-backend.outputs.image }}
+        tags: ${{ steps.build-backend.outputs.tags }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}

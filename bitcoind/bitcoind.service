@@ -20,7 +20,7 @@ ExecStartPre=/usr/bin/mkdir -p /var/data/bitcoin
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.cid
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile %t/%n.cid
 
-ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull always\
+ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull newer\
   --cgroups no-conmon --sdnotify conmon --log-driver journald --name bitcoind\
   --read-only --stop-timeout 120 --network bitcoind\
   --volume /var/data/bitcoin:/data:z\

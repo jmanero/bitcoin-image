@@ -1,0 +1,38 @@
+name: bitcoind
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'bitcoind/**'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  image:
+    name: Build and Push Image
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Image
+      id: build
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ghcr.io/jmanero/bitcoind
+        tags: latest 23.0 23.0-${{ github.sha }}
+        context: bitcoind
+        containerfiles: bitcoind/Containerfile
+
+    - name: Push bitcoind Image to Registry
+      id: push
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build.outputs.image }}
+        tags: ${{ steps.build.outputs.tags }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
