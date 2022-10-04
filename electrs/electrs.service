@@ -24,6 +24,8 @@ ExecStart=/usr/bin/podman run -d --cidfile %t/%n.cid --rm --pull newer\
   --cgroups no-conmon --sdnotify conmon --log-driver journald --name electrs\
   --read-only --stop-timeout 120 --network bitcoind --publish 50042:50042/tcp\
   --volume /var/data/electrs:/data:z\
+  --label traefik.enable=true\
+  --label traefik.tcp.services.electrs.loadbalancer.server.port=50001\
   ghcr.io/jmanero/electrs:0.9.8
 
 [Install]
