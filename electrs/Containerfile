@@ -5,7 +5,7 @@ FROM docker.io/rust:1-slim-bullseye AS build
 ARG VERSION
 
 RUN apt-get update
-RUN apt-get install -y clang librocksdb-dev=6.11.4-3
+RUN apt-get install -y clang cmake build-essential 'librocksdb-dev=6.11.4*'
 
 ## Fetch from GitHub... Unfortunatly the maintauners aren't providing signatures
 ## for releases, and GitHub doesn't currently provide a way to validate their
