@@ -26,7 +26,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: jmanero/electrs
-        tags: latest 0.9.8 0.9.8-${{ github.sha }}
+        tags: latest 0.9.10 0.9.10-${{ github.sha }}
         context: electrs
         containerfiles: electrs/Containerfile
 
