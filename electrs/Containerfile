@@ -1,4 +1,4 @@
-ARG VERSION="0.9.8"
+ARG VERSION="0.9.10"
 
 ## Build the Rust binary
 FROM docker.io/rust:1-slim-bullseye AS build
@@ -16,7 +16,7 @@ RUN tar -xvzf v${VERSION}.tar.gz
 WORKDIR /electrs-${VERSION}
 RUN cargo build --locked --release
 
-FROM registry.fedoraproject.org/fedora-minimal:36
+FROM registry.fedoraproject.org/fedora-minimal:37
 ARG VERSION
 
 RUN mkdir -p /etc/electrs
