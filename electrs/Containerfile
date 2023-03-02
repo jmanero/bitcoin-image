@@ -1,4 +1,4 @@
-ARG VERSION="0.9.10"
+ARG VERSION="0.9.12"
 
 ## Build the Rust binary
 FROM docker.io/rust:1-slim-bullseye AS build
