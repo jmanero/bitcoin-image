@@ -11,4 +11,4 @@ db_dir = "/data"
 electrum_rpc_addr = "0.0.0.0:50001"
 monitoring_addr   = "0.0.0.0:50042"
 
-log_filters = "DEBUG"
+log_filters = "INFO"
