@@ -1,24 +1,25 @@
-ARG VERSION="23.0"
+ARG VERSION="24.1"
 
-FROM registry.fedoraproject.org/fedora:36 AS fetch
+FROM registry.fedoraproject.org/fedora:38 AS fetch
 ARG VERSION
 
 ADD https://bitcoincore.org/bin/bitcoin-core-${VERSION}/bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz .
 ADD https://bitcoincore.org/bin/bitcoin-core-${VERSION}/SHA256SUMS .
 ADD https://bitcoincore.org/bin/bitcoin-core-${VERSION}/SHA256SUMS.asc .
 
-## HACK: https://github.com/bitcoin/bitcoin/issues/25022
-ADD https://raw.githubusercontent.com/Kvaciral/kvaciral/main/kvaciral.asc .
-RUN gpg --import kvaciral.asc
+## From https://bitcoincore.org/en/download/
+RUN dnf install -y git
+RUN git clone https://github.com/bitcoin-core/guix.sigs
+RUN gpg --import guix.sigs/builder-keys/*
 
 ## Verify retieved archive
-RUN gpg --keyserver hkps://keys.openpgp.org --auto-key-retrieve --trust-model always --verify SHA256SUMS.asc SHA256SUMS
+RUN gpg --verify SHA256SUMS.asc
 RUN sha256sum --ignore-missing --check SHA256SUMS
 
 ## Unpacks bitcoin-${VERSION} directory into WORKDIR
 RUN tar -xzf bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
 
-FROM registry.fedoraproject.org/fedora-minimal:36
+FROM registry.fedoraproject.org/fedora-minimal:38
 ARG VERSION
 
 RUN mkdir -p /etc/bitcoin
