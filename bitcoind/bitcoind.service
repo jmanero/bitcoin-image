@@ -1,9 +1,9 @@
 [Unit]
-Description=bitcoind in a podman container
+Description=bitcoind in a container
 Documentation=https://github.com/jmanero/bitcoin-image
 
-Wants=network-online.target local-fs.target podman-network@bitcoind.service
-After=network-online.target local-fs.target podman-network@bitcoind.service
+Wants=network-online.target local-fs.target
+After=network-online.target local-fs.target
 
 RequiresMountsFor=%t/containers
 
@@ -12,19 +12,23 @@ Type=notify
 NotifyAccess=all
 
 Restart=on-failure
-TimeoutStopSec=70
+TimeoutStopSec=121
 
 Environment=PODMAN_SYSTEMD_UNIT=%n
-ExecStartPre=/usr/bin/rm bitcoind
-ExecStartPre=/usr/bin/mkdir -p /var/data/bitcoin
-ExecStop=/usr/bin/podman stop --ignore bitcoind
-ExecStopPost=/usr/bin/podman rm -f --ignore bitcoind
+Environment=SERVICE_NAME=%N
+Environment=SERVICE_CONTAINER_IMAGE=ghcr.io/jmanero/bitcoind:24.1
 
-ExecStart=/usr/bin/podman run -d --name bitcoind --rm --pull newer\
-  --cgroups no-conmon --sdnotify conmon --log-driver journald\
-  --read-only --stop-timeout 120 --network bitcoind\
-  --volume /var/data/bitcoin:/data:z\
-  ghcr.io/jmanero/bitcoind:24.1 -conf=/etc/bitcoin/bitcoin.conf
+ExecStartPre=/usr/bin/podman rm --force --ignore ${SERVICE_NAME}
+ExecStartPre=/usr/bin/mkdir -p /var/data/bitcoin
+
+ExecStart=/usr/bin/podman run -d --name ${SERVICE_NAME} --pull newer\
+  --cgroups no-conmon --sdnotify conmon --log-driver journald --stop-timeout 120\
+  --publish 8332:8332/tcp --publish 8333:8333/tcp\
+  --read-only --volume /var/data/bitcoin:/data:z\
+  ${SERVICE_CONTAINER_IMAGE}
+
+ExecStop=/usr/bin/podman stop --ignore ${SERVICE_NAME}
+ExecStopPost=/usr/bin/podman rm --force --ignore ${SERVICE_NAME}
 
 [Install]
 WantedBy=default.target

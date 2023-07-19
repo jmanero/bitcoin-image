@@ -27,4 +27,6 @@ COPY bitcoin.conf /etc/bitcoin/
 
 ## bitcoin-core's linux build maps to an FHS tree... Just dump it into the image's /usr tree
 COPY --from=fetch bitcoin-${VERSION} /usr
+
 ENTRYPOINT [ "/usr/bin/bitcoind" ]
+CMD [ "-conf=/etc/bitcoin/bitcoin.conf" ]
