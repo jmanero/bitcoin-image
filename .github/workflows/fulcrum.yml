@@ -1,0 +1,41 @@
+name: fulcrum
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'fulcrum/**'
+  workflow_dispatch:
+    inputs: {}
+
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  image:
+    name: Build and Push Image
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Image
+      id: build
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: jmanero/fulcrum
+        tags: latest 1.9 1.9-${{ github.sha }}
+        context: fulcrum
+        containerfiles: fulcrum/Containerfile
+
+    - name: Push fulcrum Image to Registry
+      id: push
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build.outputs.image }}
+        tags: ${{ steps.build.outputs.tags }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}

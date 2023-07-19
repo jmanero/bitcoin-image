@@ -1,0 +1,31 @@
+ARG VERSION="1.9.1"
+
+FROM registry.fedoraproject.org/fedora:38 AS fetch
+ARG VERSION
+
+ADD https://github.com/cculianu/Fulcrum/releases/download/v${VERSION}/Fulcrum-${VERSION}-x86_64-linux.tar.gz .
+ADD https://github.com/cculianu/Fulcrum/releases/download/v${VERSION}/Fulcrum-${VERSION}-x86_64-linux.tar.gz.asc .
+ADD https://raw.githubusercontent.com/Electron-Cash/keys-n-hashes/master/pubkeys/calinkey.txt .
+
+RUN gpg --import ./calinkey.txt
+
+## Verify retieved archive
+RUN gpg --verify Fulcrum-${VERSION}-x86_64-linux.tar.gz.asc
+
+## Unpacks Fulcrum-${VERSION}-x86_64-linux directory into WORKDIR
+RUN tar -xzf Fulcrum-${VERSION}-x86_64-linux.tar.gz
+
+FROM registry.fedoraproject.org/fedora-minimal:38
+ARG VERSION
+
+RUN microdnf install -y bzip2-libs
+RUN cd /usr/lib64/; ln -s libbz2.so.1.0.8 libbz2.so.1.0
+
+RUN mkdir -p /etc/fulcrum
+COPY fulcrum.conf banner.txt /etc/fulcrum/
+
+COPY --from=fetch Fulcrum-${VERSION}-x86_64-linux/Fulcrum /usr/bin/fulcrum
+COPY --from=fetch Fulcrum-${VERSION}-x86_64-linux/FulcrumAdmin /usr/bin/fulcrum-admin
+
+ENTRYPOINT [ "/usr/bin/fulcrum" ]
+CMD [ "/etc/fulcrum/fulcrum.conf" ]

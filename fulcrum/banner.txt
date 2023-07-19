@@ -1,0 +1,3 @@
+Private Electrum Server
+
+$SERVER_SUBVERSION
