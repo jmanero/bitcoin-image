@@ -23,7 +23,7 @@ ExecStartPre=/usr/bin/mkdir -p /var/data/fulcrum
 
 ExecStart=/usr/bin/podman run -d --name ${SERVICE_NAME} --pull newer\
   --cgroups no-conmon --sdnotify conmon --log-driver journald --name ${SERVICE_NAME} --stop-timeout 120\
-  --publish 50001:50001/tcp --publish 50003:50003/tcp --publish 58080:58080/tcp\
+  --network internal --publish 50001:50001/tcp --publish 50003:50003/tcp --publish 58000:58000/tcp --publish 58080:58080/tcp\
   --read-only --volume /var/data/fulcrum:/data:z\
   ${SERVICE_CONTAINER_IMAGE}
 
